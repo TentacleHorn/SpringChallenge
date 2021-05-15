@@ -1,0 +1,36 @@
+
+encoding = 'iso-8859-1'
+
+n_token = "aaaaaaaaaaaaaaaaaaaaa"
+r_token = "bbbbbbbbbbbbbbbbbbbbb"
+b_token = "ccccccccccccccccccccc"
+import gzip
+
+
+def encode(data):
+    """has some randomness to it due to gzip.compress"""
+    zipped = gzip.compress(data)
+    as_str = zipped.decode(encoding)
+    as_str = as_str.replace("\n", n_token)
+    as_str = as_str.replace("\r", r_token)
+    # as_str = as_str.replace("\b", b_token)
+    return as_str
+
+
+def decode(data):
+    data = data.replace(n_token, "\n")
+    data = data.replace(r_token, "\r")
+    # data = data.replace(b_token, "\b")
+    data = data.encode(encoding)
+    return gzip.decompress(data)
+
+
+with open(__file__, encoding=encoding) as f:
+    d = f.readlines()[1]
+    token = "comment="
+    ind = d.find(token)
+    data = d[ind + len(token):]
+    data = decode(data)
+    print(data)
+
+
